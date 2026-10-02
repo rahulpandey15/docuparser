@@ -1,0 +1,18 @@
+services:
+  chroma:
+    image: chromadb/chroma:latest
+    ports: ["8001:8000"]
+    volumes: ["chroma_data:/data"]   # check the Chroma docs for the persist path of your image version
+  api:
+    build: .
+    env_file: .env
+    environment:
+      DOCUPARSER_CHROMA_MODE: http
+      DOCUPARSER_CHROMA_HOST: chroma
+      DOCUPARSER_CHROMA_PORT: "8000"
+    ports: ["8000:8000"]
+    volumes: ["./data:/app/data", "hf_cache:/root/.cache/huggingface"]
+    depends_on: [chroma]
+volumes:
+  chroma_data:
+  hf_cache:
